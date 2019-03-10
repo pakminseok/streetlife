@@ -7,3 +7,5 @@ June 2018 – December 2018
 • Make your own Street( ex.) Food Street, Music Street etc.). 
 
 • Using Python, Django, GoogleMapAPI, BootStrap 
+
+https://www.youtube.com/watch?v=SH_mzUpoT5M
