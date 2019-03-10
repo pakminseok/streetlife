@@ -1,0 +1,59 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>
+	{{spot.title}}
+	</title>
+	
+</head>
+<style>
+.spot_photo {
+ 	max-width: 300px;
+ 	max-height: 300px;
+ 	margin-left: auto;
+    margin-right: auto;
+    display: block
+	}
+#map {
+	width: 300px;
+    height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+</style>
+ <script>
+  function initMap() {
+    var spot_position = {lat: {{spot.latitude}}, lng: {{spot.longitude}}};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: spot_position
+        });
+        var marker = new google.maps.Marker({
+          position: spot_position,
+          map: map
+        });
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADFi5TSdIfhMmSoXJ7gNHoXZsXbwQlA_c&callback=initMap"
+    async defer></script>
+<body>
+	<h1 align="center">{{spot.title}}</h1>
+	{% if spot.photo %}
+		<img src="{{ spot.photo.url }}" class="spot_photo"/>
+	{% endif %}
+	<table align="center">
+		<tr>
+			<td><h3>Short review</h3></td>
+			<td>{{ spot.content|linebreaks }}</td>
+		</tr>
+		<tr>
+			<td><h3>Location</h3></td>
+			<td><div id="map"></div></td>
+		</tr>
+	</table>
+
+</body>
+</html>

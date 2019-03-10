@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block head_title %}EDIT_STREET || {{block.super}} {% endblock head_title %} 
+{% block extra_head %}
+<style>
+* {
+	box-sizing: border-box;
+}
+.column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+}
+#content {
+	white-space: normal;
+	line-height: 1.2;
+	height: 2.4em;/*show 2 lines else ...*/
+	text-align: left;
+	word-wrap: break-word;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow:hidden;
+    text-overflow:ellipsis;
+}
+div.spotList {
+	margin: 5px;
+	border: 1px solid #C0C0C0;
+	float: left;
+	width: 220px;
+}
+div.spotList:hover {
+	border: 1px solid #777;
+}
+div.spotList img {
+	width: 100%;
+	height: auto;
+}
+div.spot_title {
+	padding: 15px;
+	text-align: center;
+</style>
+
+{% endblock %}
+{% block my-content %}
+
+<form name='street_form' method='POST' action="" enctype="multipart/form-data"> {% csrf_token %}
+<div class="column">
+	<table align="center">
+	<tr>
+		<td><h1>Title </h1></td>
+		<td><input type='text' name='title' value={{street.title}}></td>
+	</tr>
+	<tr>
+		<td><h3>Category</h3></td>
+		<td>
+			<select name='category'>
+    			<option value="{{street.category}}" selected>{{street.category}}</option>
+    			<option value="food">Food</option>
+    			<option value="culture">Culture</option>
+    			<option value="tour">Tour</option>
+    			<option value="history">History</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td><h3>Description</h3></td>
+		<td><textarea name='content' cols="40" rows="5" placeholder="description">{{street.content}}</textarea></td>
+	</tr>
+	<tr>
+		<td><h3>City</h3></td>
+		<td><input type='text' name='city' value={{street.city}}></td>
+	</tr>
+	<tr>		
+		<td>
+		<button type="submit" class="btn btn-default">Edit Street</button>
+		<a href="/edit/street/delete/{{street.pk}}" class="btn btn-default">Delete</a>
+		<a href="/street/" class="btn btn-default">Cancel</a>
+		</td>
+	</tr>
+	</table>
+</div>
+<h1 align="center">Choose Spots</h1>
+<div class="column" style="overflow:scroll; width:500px; height:500px; padding:10px;"">
+{% for spot in spot_list %}
+	<div class="spotList">
+		<input type="checkbox" name="spots" value="{{spot.pk}}">
+		<a href='/show/spot/{{spot.pk}}' target="popup" onClick="window.open(this.href,'','width=500,height=500,scrollbars=yes'); return false;">
+		<img src="{{ spot.photo.url }}" width="600" height="400" />
+		</a>
+		
+		<div class="spot_title">{{ spot.title }}</div>
+		<p id="content">{{ spot.content }}</p>
+	</div>
+{% endfor %}
+</div>
+</form>
+
+{% endblock my-content %}

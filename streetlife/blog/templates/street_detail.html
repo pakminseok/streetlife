@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block head_title %}{{street.title}} || {{block.super}} {% endblock head_title %} 
+{% block extra_head %}
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<style>
+table {
+  width: 50%;
+  height: 600px;
+}
+#Left{
+  width:50%;
+  float: left;
+}
+#Right{
+  width:50%;
+  float: right;
+}
+#map {
+  margin-left: 40px;
+	width: 500px;
+  height: 300px;
+  }
+
+.mySlides {display: none}
+
+/* Slideshow container */
+.slideshow-container {
+  width: 500px;
+  position: relative;
+  margin: auto;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: black;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+      
+</style>
+<script>
+var map;
+  function initMap() {
+  	var street_center_position = {lat: {{spots.0.latitude}}, lng: {{spots.0.longitude}}};
+   	map = new google.maps.Map(document.getElementById('map'), {
+    	zoom: 15,
+        center: street_center_position,
+        mapTypeId: 'terrain'
+    });
+    var spot_positions = [];
+    var marker, i;
+
+    {% for spot in spots %}
+          spot_positions.push({lat: {{spot.latitude}}, lng: {{spot.longitude}}});
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng({{spot.latitude}}, {{spot.longitude}}),
+            label: "{{spot.title}}",
+            map: map
+          });
+    {% endfor %}
+
+
+    var streetPath = new google.maps.Polyline({
+      path: spot_positions,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+    streetPath.setMap(map);
+  }
+var slideIndex = 1;
+showSlides(slideIndex);
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+  }
+  for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " active";
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADFi5TSdIfhMmSoXJ7gNHoXZsXbwQlA_c&callback=initMap"
+    async defer></script>
+{% endblock %}
+{% block my-content %}
+
+<div id="Left">
+<!--Show spots(slide)-->
+{% if spots %}
+<div class="slideshow-container">
+  {% for spot in spots %}
+    <div class="mySlides">
+      <h3 align="center">{{spot.title}}</h3>
+      <a href='/show/spot/{{spot.pk}}' target="popup" onClick="window.open(this.href,'','width=500,height=500,scrollbars=yes'); return false;"><img src="{{ spot.photo.url }}" style="width:100%"></a>
+    </div>
+  {% endfor %}
+{% endif %}
+<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+<a class="next" onclick="plusSlides(1)">&#10095;</a>
+</div>
+
+<br>
+
+<div style="text-align:center">
+  {% for spot in spots %}
+  <span class="dot" onclick="currentSlide({{ forloop.counter }})"></span> 
+  {% endfor %}
+</div>
+
+<!--Show street-->
+<div id="map"></div>
+</div>
+
+<div id="Right">
+<table>					
+	<tr>
+		<td><h1>Title </h1></td>
+		<td><h1>{{street.title}}</h1></td>
+	</tr>
+	<tr>
+		<td><h3>Category</h3></td>
+		<td>{{street.category}}</td>
+	</tr>
+	<tr>
+		<td><h3>Description</h3></td>
+		<td>{{ street.content|linebreaks }}</td>
+	</tr>
+	<tr>
+		<td><h3>City</h3></td>
+		<td>{{street.city}}</td>
+	</tr>		
+</table>
+  {{ total_recommend }} Recommend {{ total_recommend | pluralize }}
+
+  {% if request.user.is_authenticated %}
+  <form action="{% url 'recommend' street.pk %}" method='post'>
+      {% csrf_token %}
+      {% if is_recommended %}
+      <button type='submit' value="{{ street.pk }}" class="btn btn-danger">
+      Not Recommend
+      </button>
+      {% else %}
+      <button type='submit' value="{{ street.pk }}" class="btn btn-primary">
+      Recommend
+      </button>
+      {% endif %}
+  </form>
+  {% endif %}
+<div class="panel-footer">
+  <a href="{% url "street" %}" class="btn btn-defualt">목록으로</a>
+  {% if request.user == street.user %}
+  <a href="/edit/street/{{street.pk}}" class="btn btn-default">Edit</a>
+  {% endif %}
+</div>
+</div>
+
+<script>
+var slideIndex = 1;
+showSlides(slideIndex);
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+  }
+  for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " active";
+}
+</script>
+
+{% endblock my-content %}
+

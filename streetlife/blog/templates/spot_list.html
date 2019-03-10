@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block head_title %}SPOT || {{block.super}} {% endblock head_title %} 
+{% block extra_head %}
+<style>
+div.spots {
+	margin: 20px;
+	border: 1px solid #CCCCCC;
+	float: left;
+	width: 260px;
+}
+div.spots:hover {
+	border: 1px solid #777;
+}
+div.spots img {
+	width: 100%;
+	height: auto;
+}
+div.spot_title {
+	padding: 15px;
+	text-align: center;
+}
+#content {
+	white-space: normal;
+	line-height: 1.2;
+	height: 2.4em;/*show 2 lines else ...*/
+	text-align: left;
+	word-wrap: break-word;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow:hidden;
+    text-overflow:ellipsis;
+}
+</style>
+{% endblock %}
+{% block my-content %}
+<div class="spotlist">
+	{% for spot in spot_list %}
+	<div class="spots">
+		<img src="{{ spot.photo.url }}" width="600" height="400" />
+		<h2>{{ spot.title }}</h2>
+		<p id="content">{{ spot.content }}</p>
+		<a href="{% url "spot_detail" spot.pk %}">
+			<button>View Spot</button>
+		</a>
+	</div>
+	{% endfor %}
+</div>
+{% endblock my-content %}

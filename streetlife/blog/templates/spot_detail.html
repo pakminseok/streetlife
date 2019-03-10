@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block head_title %}{{spot.title}} || {{block.super}} {% endblock head_title %} 
+{% block extra_head %}
+<style>
+.spot_photo {
+ 	max-width: 300px;
+ 	max-height: 300px;
+ 	margin-left: auto;
+    margin-right: auto;
+    display: block
+	}
+#map {
+	width: 40%;
+    height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+</style>
+ <script>
+  function initMap() {
+    var spot_position = {lat: {{spot.latitude}}, lng: {{spot.longitude}}};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: spot_position
+        });
+        var marker = new google.maps.Marker({
+          position: spot_position,
+          map: map
+        });
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADFi5TSdIfhMmSoXJ7gNHoXZsXbwQlA_c&callback=initMap"
+    async defer></script>
+{% endblock %}
+{% block my-content %}
+	{% if spot.photo %}
+		<img src="{{ spot.photo.url }}" class="spot_photo"/>
+	{% endif %}
+	<table align="center">
+		<tr>
+			<td><h3>Title</h3></td>
+			<td><h1 align="center">{{spot.title}}</h1></td>
+		</tr>
+		<tr>
+			<td><h3>Short review</h3></td>
+			<td>{{ spot.content|linebreaks }}</td>
+		</tr>
+		<tr>
+			<td><h3>Location</h3></td>
+			<td></td>
+		</tr>
+	</table>
+	<div id="map"></div>
+	<div class="panel-footer">
+		<a href="{% url "spot" %}" class="btn btn-defualt">목록으로</a>
+		{% if request.user == spot.spot_user %}
+		<a href="/edit/spot/{{spot.pk}}" class="btn btn-default">Edit</a>
+		{% endif %}
+
+	</div>
+{% endblock my-content %}

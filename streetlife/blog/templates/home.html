@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block head_title %}HOME || {{block.super}} {% endblock head_title %} 
+
+{% block my-content %}
+<form method='GET' action='' style="margin : 20px">
+	<input type='text' name='query' placeholder="Search Streets" 
+	style="width: 75%" value='{{ request.GET.query }}' />
+	<input type="submit" value="Search" />
+</form>
+
+<div class="container">
+	<div class="col-sm-12">
+		<h1>This is StreetLife. You can search Street U want.</h1>
+	</div>
+</div>
+{% endblock my-content %}

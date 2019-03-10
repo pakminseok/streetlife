@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block head_title %}STREET || {{block.super}} {% endblock head_title %} 
+{% block extra_head %}
+<style>
+div.streets {
+	margin: 20px;
+	border: 1px solid #CCCCCC;
+	float: left;
+	width: 260px;
+}
+div.streets:hover {
+	border: 1px solid #777;
+}
+div.streets img {
+	width: 100%;
+	height: auto;
+}
+div.street_title {
+	padding: 15px;
+	text-align: center;
+}
+#category {
+	color : #3366CC;
+	text-transform: capitalize;
+}
+#content {
+	white-space: normal;
+	line-height: 1.2;
+	height: 2.4em;/*show 2 lines else ...*/
+	text-align: left;
+	word-wrap: break-word;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow:hidden;
+    text-overflow:ellipsis;
+}
+</style>
+{% endblock %}
+{% block my-content %}
+<form method='GET' action='' style="margin : 20px">
+	<input type='text' name='query' placeholder="Search Streets" 
+	style="width: 75%" value='{{ request.GET.query }}' />
+	<input type="submit" value="Search" />
+</form>
+
+<div class="streetlist">
+	{% for street in street_list %}
+	<div class="streets">
+		<p id="category">#{{ street.category }}</p>
+		<img src="{{ street.spots.all.0.photo.url }}" width="600" height="400" />
+		<h2>{{ street.title }}</h2>
+		<p id="content">{{ street.content }}</p>
+		<a href="{% url "street_detail" street.pk %}">
+			<button>View Spot</button>			
+		</a>
+	</div>
+	{% endfor %}
+</div>
+{% endblock my-content %}

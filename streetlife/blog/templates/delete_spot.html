@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block head_title %}DELETE SPOT || {{block.super}} {% endblock head_title %} 
+
+{% block my-content %}
+<h1> Delete Confirm </h1>
+<form method="POST">
+{%csrf_token%}
+<input type=submit value="confirm">
+<a href='/spot/'>Cancel</a>
+</form>
+{% endblock my-content %}

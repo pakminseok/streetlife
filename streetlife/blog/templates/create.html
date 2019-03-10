@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block head_title %}CREATE || {{block.super}} {% endblock head_title %} 
+
+{% block my-content %}
+	<div class="container">
+		<div class="col-sm-12">
+			<a href='/create/spot/' class="btn btn-default">Spot</a>
+			<a href='/create/street/' class="btn btn-default">Street</a>
+		</div>
+	</div>
+{% endblock my-content %}
